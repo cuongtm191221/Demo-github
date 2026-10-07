@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Tra Cứu Câu Lệnh Git Đầy Đủ & Trực Quan</title>
+    <meta name="description" content="Hướng dẫn chi tiết các câu lệnh Git từ cơ bản đến nâng cao với giao diện trực quan, dễ tra cứu và sao chép.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0d1117;
+            --bg-card: #161b22;
+            --bg-card-hover: #1c2128;
+            --border-color: #30363d;
+            --border-glow: #58a6ff;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-heading: #f0f6fc;
+            --git-orange: #f05032;
+            --accent-cyan: #38bdf8;
+            --accent-green: #3fb950;
+            --accent-purple: #a855f7;
+            --accent-yellow: #d29922;
+            --code-bg: #0d1117;
+            --shadow-glow: rgba(240, 80, 50, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Header & Hero */
+        header {
+            background: radial-gradient(circle at top center, rgba(240, 80, 50, 0.12) 0%, transparent 70%),
+                        linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 40px 20px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .git-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(240, 80, 50, 0.1);
+            border: 1px solid rgba(240, 80, 50, 0.3);
+            color: var(--git-orange);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, #f05032 0%, #ff7b54 50%, #ffb26b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        /* Search & Controls */
+        .controls-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            background: rgba(22, 27, 34, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--git-orange);
+            box-shadow: 0 0 0 3px rgba(240, 80, 50, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            width: 20px;
+            height: 20px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-heading);
+            border-color: var(--text-secondary);
+        }
+
+        .tab-btn.active {
+            background: var(--git-orange);
+            color: #fff;
+            border-color: var(--git-orange);
+            box-shadow: 0 2px 8px rgba(240, 80, 50, 0.4);
+        }
+
+        /* Container & Layout */
+        .container {
+            max-width: 1100px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        /* Git Architecture Visualizer */
+        .visualizer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .visualizer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .visualizer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .visualizer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .area-box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .area-box.working { border-top: 4px solid var(--accent-yellow); }
+        .area-box.staging { border-top: 4px solid var(--accent-cyan); }
+        .area-box.local { border-top: 4px solid var(--accent-green); }
+        .area-box.remote { border-top: 4px solid var(--git-orange); }
+
+        .area-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-bottom: 4px;
+        }
+
+        .area-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .flow-arrow {
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            font-family: 'Fira Code', monospace;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Section Layout */
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin: 40px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title .badge {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .command-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Command Card */
+        .cmd-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .cmd-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(240, 80, 50, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .cmd-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .cmd-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .cmd-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-basic { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); border: 1px solid rgba(63, 185, 80, 0.3); }
+        .tag-branch { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .tag-remote { background: rgba(240, 80, 50, 0.15); color: var(--git-orange); border: 1px solid rgba(240, 80, 50, 0.3); }
+        .tag-undo { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); border: 1px solid rgba(210, 153, 34, 0.3); }
+        .tag-adv { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+        .cmd-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Code Block & Copy */
+        .code-box {
+            position: relative;
+            background: var(--code-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #58a6ff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow-x: auto;
+        }
+
+        .code-box code {
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        /* Command Options / Flags */
+        .cmd-options {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px stroke var(--border-color);
+            font-size: 0.83rem;
+        }
+
+        .opt-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .opt-flag {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-yellow);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .opt-desc {
+            color: var(--text-secondary);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1f2937;
+            color: #fff;
+            border: 1px solid var(--accent-green);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Empty State */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .no-results svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="git-logo-badge">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.6 10.59L11.41 1.78C11.79 1.4 12.42 1.4 12.8 1.78L15.47 4.45L12.96 6.96C12.63 6.84 12.26 6.79 11.88 6.82C11.13 6.89 10.45 7.35 10.12 8.04C9.69 8.94 9.87 10.03 10.55 10.71C11.23 11.39 12.32 11.57 13.22 11.14C13.91 10.81 14.37 10.13 14.44 9.38C14.47 9 14.42 8.63 14.3 8.3L16.8 5.79L22.21 11.2C22.6 11.58 22.6 12.21 22.21 12.59L13.4 21.4C13.02 21.78 12.39 21.78 12.01 21.4L2.6 12C2.21 11.61 2.21 10.98 2.6 10.59Z"/>
+                </svg>
+                Git Cheat Sheet Guide
+            </div>
+            <h1>Hướng Dẫn Tra Cứu <span>Câu Lệnh Git</span></h1>
+            <p class="subtitle">Danh sách đầy đủ các câu lệnh Git thông dụng, ví dụ thực tế và giải thích chi tiết bằng tiếng Việt.</p>
+
+            <div class="controls-container">
+                <div class="search-box">
+                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm câu lệnh (vd: commit, checkout, remote, push...)...">
+                </div>
+
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="tab-btn active" data-category="all">Tất Cả</button>
+                    <button class="tab-btn" data-category="basic">Cơ Bản</button>
+                    <button class="tab-btn" data-category="branch">Nhánh (Branch)</button>
+                    <button class="tab-btn" data-category="remote">Remote & GitHub</button>
+                    <button class="tab-btn" data-category="undo">Hoàn Tác (Undo)</button>
+                    <button class="tab-btn" data-category="adv">Nâng Cao (Advanced)</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Interactive Git Workflow Area -->
+        <div class="visualizer-card">
+            <div class="visualizer-title">
+                <svg width="20" height="20" fill="none" stroke="var(--git-orange)" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Sơ Đồ Luồng Hoạt Động Của Git (Git Workflow)
+            </div>
+            <div class="visualizer-grid">
+                <div class="area-box working">
+                    <div class="area-title">1. Working Directory</div>
+                    <div class="area-desc">Thư mục làm việc thực tế chứa code chưa lưu trữ.</div>
+                    <div class="flow-arrow">git add &rarr;</div>
+                </div>
+                <div class="area-box staging">
+                    <div class="area-title">2. Staging Area</div>
+                    <div class="area-desc">Khu vực tạm chờ đóng gói commit.</div>
+                    <div class="flow-arrow">git commit &rarr;</div>
+                </div>
+                <div class="area-box local">
+                    <div class="area-title">3. Local Repository</div>
+                    <div class="area-desc">Kho lưu trữ trên máy máy cá nhân của bạn.</div>
+                    <div class="flow-arrow">git push &rarr;</div>
+                </div>
+                <div class="area-box remote">
+                    <div class="area-title">4. Remote Repository</div>
+                    <div class="area-desc">Kho lưu trữ đám mây (GitHub, GitLab...).</div>
+                    <div class="flow-arrow">&larr; git pull / fetch</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Command Categories & Cards -->
+        <div id="commandContainer">
+
+            <!-- Category: Basic -->
+            <div class="category-section" data-cat="basic">
+                <h2 class="section-title">
+                    <span>1. Khởi Tạo & Thao Tác Cơ Bản</span>
+                    <span class="badge">Basic Workflow</span>
+                </h2>
+                <div class="command-grid">
+
+                    <div class="cmd-card" data-keywords="init khoi tao repository repo new">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git init</div>
+                                <span class="cmd-tag tag-basic">Cơ bản</span>
+                            </div>
+                            <div class="cmd-desc">Khởi tạo một Git Repository mới tại thư mục hiện tại. Tạo thư mục ẩn <code>.git</code> lưu lịch sử phiên bản.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git init</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git init')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="clone sao chep github download URL">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git clone</div>
+                                <span class="cmd-tag tag-basic">Cơ bản</span>
+                            </div>
+                            <div class="cmd-desc">Sao chép một repository từ xa (từ GitHub/GitLab...) về máy tính của bạn.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git clone &lt;repository_url&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git clone https://github.com/user/repo.git')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="status kiem tra trang thai change track modified">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git status</div>
+                                <span class="cmd-tag tag-basic">Cơ bản</span>
+                            </div>
+                            <div class="cmd-desc">Kiểm tra trạng thái hiện tại của các file (chưa theo dõi, đã sửa đổi, đã đưa vào Staging Area).</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git status</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git status')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">-s</span><span class="opt-desc">Hiển thị dạng rút gọn (short format)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="add them staging area track file">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git add</div>
+                                <span class="cmd-tag tag-basic">Cơ bản</span>
+                            </div>
+                            <div class="cmd-desc">Thêm file đã chỉnh sửa vào Staging Area để chuẩn bị commit.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git add .</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git add .')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">.</span><span class="opt-desc">Thêm tất cả các file thay đổi trong thư mục</span></div>
+                                <div class="opt-item"><span class="opt-flag">&lt;filename&gt;</span><span class="opt-desc">Chỉ thêm một file cụ thể</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="commit luu phien ban message snapshot">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git commit</div>
+                                <span class="cmd-tag tag-basic">Cơ bản</span>
+                            </div>
+                            <div class="cmd-desc">Lưu lại ảnh chụp (snapshot) các thay đổi từ Staging Area vào kho lưu trữ cục bộ kèm lời nhắn.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git commit -m "Nội dung commit"</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git commit -m &quot;Cập nhật tính năng mới&quot;')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">--amend</span><span class="opt-desc">Sửa lại ghi chú commit gần nhất hoặc bổ sung file quên add</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="diff so sanh thay doi check difference">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git diff</div>
+                                <span class="cmd-tag tag-basic">Cơ bản</span>
+                            </div>
+                            <div class="cmd-desc">So sánh chi tiết sự thay đổi giữa Working Directory và Staging Area (hoặc giữa các commit).</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git diff</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git diff')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">--staged</span><span class="opt-desc">Xem khác biệt giữa Staging Area và commit gần nhất</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Category: Branching -->
+            <div class="category-section" data-cat="branch">
+                <h2 class="section-title">
+                    <span>2. Quản Lý Nhánh (Branch & Merge)</span>
+                    <span class="badge">Branching</span>
+                </h2>
+                <div class="command-grid">
+
+                    <div class="cmd-card" data-keywords="branch danh sach nhanh list view delete">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git branch</div>
+                                <span class="cmd-tag tag-branch">Nhánh</span>
+                            </div>
+                            <div class="cmd-desc">Xem danh sách các nhánh hiện có hoặc tạo/xóa nhánh.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git branch</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git branch')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">-a</span><span class="opt-desc">Xem tất cả các nhánh (bao gồm cả nhánh remote)</span></div>
+                                <div class="opt-item"><span class="opt-flag">-d &lt;name&gt;</span><span class="opt-desc">Xóa nhánh đã gộp (safe delete)</span></div>
+                                <div class="opt-item"><span class="opt-flag">-D &lt;name&gt;</span><span class="opt-desc">Xóa ép buộc (force delete)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="checkout switch chuyen nhanh tao nhanh new branch">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git checkout / git switch</div>
+                                <span class="cmd-tag tag-branch">Nhánh</span>
+                            </div>
+                            <div class="cmd-desc">Chuyển sang nhánh khác hoặc tạo mới và chuyển ngay sang nhánh vừa tạo.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git checkout -b &lt;ten_nhanh&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git checkout -b feature-login')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">git checkout &lt;name&gt;</span><span class="opt-desc">Chuyển sang nhánh có sẵn</span></div>
+                                <div class="opt-item"><span class="opt-flag">git switch -c &lt;name&gt;</span><span class="opt-desc">Cú pháp mới gọn hơn của git checkout -b</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="merge gop nhanh combine join branch conflict">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git merge</div>
+                                <span class="cmd-tag tag-branch">Nhánh</span>
+                            </div>
+                            <div class="cmd-desc">Hợp nhất (gộp) những thay đổi từ nhánh khác vào nhánh hiện tại bạn đang làm việc.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git merge &lt;ten_nhanh_can_gop&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git merge feature-login')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="log lich su commit history view graph">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git log</div>
+                                <span class="cmd-tag tag-branch">Nhánh</span>
+                            </div>
+                            <div class="cmd-desc">Xem lịch sử các commit đã thực hiện trên nhánh hiện tại.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git log --oneline --graph --all</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git log --oneline --graph --all')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">--oneline</span><span class="opt-desc">Hiển thị mỗi commit trên 1 dòng ngắn gọn</span></div>
+                                <div class="opt-item"><span class="opt-flag">--graph</span><span class="opt-desc">Vẽ nhánh dạng đồ họa chữ đơn giản</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Category: Remote -->
+            <div class="category-section" data-cat="remote">
+                <h2 class="section-title">
+                    <span>3. Làm Việc Với Remote (GitHub / GitLab)</span>
+                    <span class="badge">Remote & Sync</span>
+                </h2>
+                <div class="command-grid">
+
+                    <div class="cmd-card" data-keywords="remote add lien ket repository github url origin">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git remote add</div>
+                                <span class="cmd-tag tag-remote">Remote</span>
+                            </div>
+                            <div class="cmd-desc">Liên kết kho lưu trữ trên máy của bạn với một kho từ xa (vd: repository trên GitHub).</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git remote add origin &lt;url&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git remote add origin https://github.com/user/demo.git')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">git remote -v</span><span class="opt-desc">Kiểm tra đường dẫn URL remote đã liên kết</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="push day len github remote upload branch">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git push</div>
+                                <span class="cmd-tag tag-remote">Remote</span>
+                            </div>
+                            <div class="cmd-desc">Đẩy các commit từ máy cá nhân (Local Repo) lên server từ xa (Remote Repo như GitHub).</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git push -u origin main</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git push -u origin main')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">-u</span><span class="opt-desc">Ghi nhớ nhánh mặc định (lần sau chỉ cần nhập <code>git push</code>)</span></div>
+                                <div class="opt-item"><span class="opt-flag">--force (-f)</span><span class="opt-desc">Đẩy ghi đè ép buộc (cần cẩn trọng!)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="pull keo cap nhat update download fetch merge">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git pull</div>
+                                <span class="cmd-tag tag-remote">Remote</span>
+                            </div>
+                            <div class="cmd-desc">Tải về và gộp (fetch + merge) những thay đổi mới nhất từ kho từ xa về máy local.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git pull origin main</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git pull origin main')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">--rebase</span><span class="opt-desc">Tải về và đặt commit mới của bạn đè lên lịch sử server</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="fetch kiem tra update download shadow check">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git fetch</div>
+                                <span class="cmd-tag tag-remote">Remote</span>
+                            </div>
+                            <div class="cmd-desc">Tải dữ liệu mới nhất từ remote về nhưng CHƯA gộp vào code của bạn (an toàn hơn pull).</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git fetch origin</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git fetch origin')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Category: Undo & Reset -->
+            <div class="category-section" data-cat="undo">
+                <h2 class="section-title">
+                    <span>4. Hoàn Tác & Khôi Phục (Undo & Restore)</span>
+                    <span class="badge">Undo</span>
+                </h2>
+                <div class="command-grid">
+
+                    <div class="cmd-card" data-keywords="restore restore staged huy add bo commit khoi phuc file">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git restore</div>
+                                <span class="cmd-tag tag-undo">Hoàn tác</span>
+                            </div>
+                            <div class="cmd-desc">Hủy bỏ các thay đổi chưa commit trong file hoặc đưa file ra khỏi Staging Area.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git restore &lt;filename&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git restore .')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">--staged</span><span class="opt-desc">Bỏ file ra khỏi Staging (tương đương git unstage)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="reset reset hard soft commit undo back head">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git reset</div>
+                                <span class="cmd-tag tag-undo">Hoàn tác</span>
+                            </div>
+                            <div class="cmd-desc">Dịch chuyển con trỏ HEAD về commit cũ hơn. Thao tác có thể ảnh hưởng đến lịch sử.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git reset --soft HEAD~1</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git reset --soft HEAD~1')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">--soft</span><span class="opt-desc">Hủy commit nhưng giữ lại code trong Staging</span></div>
+                                <div class="opt-item"><span class="opt-flag">--hard</span><span class="opt-desc">Hủy commit VÀ XÓA HẲN toàn bộ thay đổi code (Cẩn thận!)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="revert dao nguoc commit safe undo multi">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git revert</div>
+                                <span class="cmd-tag tag-undo">Hoàn tác</span>
+                            </div>
+                            <div class="cmd-desc">Tạo một commit mới đảo ngược kết quả của một commit cũ (Cách hoàn tác an toàn nhất khi đã push).</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git revert &lt;commit_hash&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git revert HEAD')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Category: Advanced -->
+            <div class="category-section" data-cat="adv">
+                <h2 class="section-title">
+                    <span>5. Nâng Cao (Stash, Rebase & Tools)</span>
+                    <span class="badge">Advanced</span>
+                </h2>
+                <div class="command-grid">
+
+                    <div class="cmd-card" data-keywords="stash cat giu tam temporary save work in progress pop list">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git stash</div>
+                                <span class="cmd-tag tag-adv">Nâng cao</span>
+                            </div>
+                            <div class="cmd-desc">Cất tạm những công việc đang dở dang (chưa commit) vào bộ nhớ đệm để làm việc khác khẩn cấp.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git stash</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git stash')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">git stash pop</span><span class="opt-desc">Lấy lại công việc cất tạm gần nhất và xóa khỏi stash</span></div>
+                                <div class="opt-item"><span class="opt-flag">git stash list</span><span class="opt-desc">Xem danh sách các lần stash</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="rebase lam sach lich su commit linear clean branch">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git rebase</div>
+                                <span class="cmd-tag tag-adv">Nâng cao</span>
+                            </div>
+                            <div class="cmd-desc">Chuyển toàn bộ nhánh hiện tại sang điểm bắt đầu từ đỉnh nhánh khác, giúp lịch sử commit thẳng đẹp.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git rebase main</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git rebase main')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="cherry pick bieu tuong lay commit cu the single commit">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git cherry-pick</div>
+                                <span class="cmd-tag tag-adv">Nâng cao</span>
+                            </div>
+                            <div class="cmd-desc">Chọn và áp dụng đúng 1 commit cụ thể từ nhánh khác về nhánh hiện tại.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git cherry-pick &lt;commit_hash&gt;</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git cherry-pick a1b2c3d')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cmd-card" data-keywords="config global username email user name mac dinh">
+                        <div>
+                            <div class="cmd-header">
+                                <div class="cmd-title">git config</div>
+                                <span class="cmd-tag tag-adv">Nâng cao</span>
+                            </div>
+                            <div class="cmd-desc">Thiết lập cấu hình thông tin cá nhân (Tên, Email) khi làm việc với Git.</div>
+                        </div>
+                        <div>
+                            <div class="code-box">
+                                <code>git config --global user.name "Tên Của Bạn"</code>
+                                <button class="copy-btn" onclick="copyCode(this, 'git config --global user.name &quot;Cuong Tran&quot;')">Copy</button>
+                            </div>
+                            <div class="cmd-options">
+                                <div class="opt-item"><span class="opt-flag">user.email</span><span class="opt-desc">Cấu hình Email: <code>git config --global user.email "email@example.com"</code></span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Empty State for Search -->
+        <div class="no-results" id="noResults">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3>Không tìm thấy câu lệnh phù hợp!</h3>
+            <p>Thử tìm từ khóa khác như "commit", "push", "checkout" hoặc "branch".</p>
+        </div>
+    </div>
+
+    <!-- Copy Toast Notification -->
+    <div class="toast" id="toast">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <span>Đã sao chép câu lệnh vào bộ nhớ tạm!</span>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Git Commands Cheat Sheet Guide | Được tạo cho dự án <strong>Demo-github</strong></p>
+    </footer>
+
+    <script>
+        // Copy functionality with Toast
+        function copyCode(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                showToast();
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Không thể sao chép: ', err);
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // Search & Filter functionality
+        const searchInput = document.getElementById('searchInput');
+        const filterTabs = document.getElementById('filterTabs');
+        const cards = document.querySelectorAll('.cmd-card');
+        const categories = document.querySelectorAll('.category-section');
+        const noResults = document.getElementById('noResults');
+
+        let currentCategory = 'all';
+
+        function filterCommands() {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            categories.forEach(cat => {
+                const catType = cat.getAttribute('data-cat');
+                const catMatch = (currentCategory === 'all' || currentCategory === catType);
+                let catVisibleCards = 0;
+
+                const catCards = cat.querySelectorAll('.cmd-card');
+                catCards.forEach(card => {
+                    const title = card.querySelector('.cmd-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.cmd-desc').textContent.toLowerCase();
+                    const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+                    const code = card.querySelector('code').textContent.toLowerCase();
+
+                    const matchesSearch = !query || title.includes(query) || desc.includes(query) || keywords.includes(query) || code.includes(query);
+
+                    if (catMatch && matchesSearch) {
+                        card.style.display = 'flex';
+                        catVisibleCards++;
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (catVisibleCards > 0) {
+                    cat.style.display = 'block';
+                } else {
+                    cat.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+
+        searchInput.addEventListener('input', filterCommands);
+
+        filterTabs.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tab-btn')) {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCategory = e.target.getAttribute('data-category');
+                filterCommands();
+            }
+        });
+    </script>
+</body>
+</html>
